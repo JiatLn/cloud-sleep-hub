@@ -22,14 +22,21 @@ io.on('connection', (socket) => {
   const count = io.engine.clientsCount
   console.log(`current clients count: ${count}`)
   console.log('a user connected', socket.id)
-  // socket.broadcast.emit('add new user', socket.id)
+  console.log('current online: ', map.size)
 
   socket.on('addUser', (data: Partial<IPeopleInfo>) => {
-    map.set(data.name!, data)
-    socket.broadcast.emit('[server](addUser)', {
+    const userData = {
       ...data,
       socketId: socket.id,
-    })
+    }
+    socket.broadcast.emit('[server](addUser)', userData)
+    map.set(socket.id, userData)
+    io.to(socket.id).emit('your-socket-id', socket.id)
+    console.log('addUser, current: ', map.size)
+  })
+
+  socket.on('hello-world', () => {
+    io.to(socket.id).emit('welcome', Array.from(map.values()))
   })
 
   socket.on('userMove', (data: any) => {
@@ -48,8 +55,9 @@ io.on('connection', (socket) => {
     // ...
     console.log(reason, socket.id)
     const count = io.engine.clientsCount
-    console.log(`current clients count: ${count}`)
+    map.delete(socket.id)
     socket.broadcast.emit('[server](userDisconnect)', socket.id)
+    console.log(`current clients count: ${count}`)
   })
 })
 
