@@ -15,6 +15,8 @@ const io = new Server(httpServer, {
   },
 })
 
+const map = new Map<string, Partial<IPeopleInfo>>()
+
 io.on('connection', (socket) => {
   // ...
   const count = io.engine.clientsCount
@@ -23,6 +25,7 @@ io.on('connection', (socket) => {
   // socket.broadcast.emit('add new user', socket.id)
 
   socket.on('addUser', (data: Partial<IPeopleInfo>) => {
+    map.set(data.name!, data)
     socket.broadcast.emit('[server](addUser)', {
       ...data,
       socketId: socket.id,
@@ -31,6 +34,12 @@ io.on('connection', (socket) => {
 
   socket.on('userMove', (data: any) => {
     socket.broadcast.emit('[server](userMove)', {
+      ...data,
+    })
+  })
+
+  socket.on('userCheat', (data: any) => {
+    socket.broadcast.emit('[server](userCheat)', {
       ...data,
     })
   })
