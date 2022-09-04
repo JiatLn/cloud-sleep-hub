@@ -8,3 +8,8 @@ export interface IPeopleInfo {
   name: string
   socketId: string
 }
+
+export interface MoveData {
+  socketId: string
+  position: Pos
+}

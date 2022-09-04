@@ -1,6 +1,6 @@
 import { createServer } from 'http'
 import { Server } from 'socket.io'
-import type { IPeopleInfo } from './types'
+import type { IPeopleInfo, MoveData } from './types'
 
 const httpServer = createServer()
 const io = new Server(httpServer, {
@@ -39,10 +39,14 @@ io.on('connection', (socket) => {
     io.to(socket.id).emit('welcome', Array.from(map.values()))
   })
 
-  socket.on('userMove', (data: any) => {
+  socket.on('userMove', (data: MoveData) => {
     socket.broadcast.emit('[server](userMove)', {
       ...data,
     })
+    const user = map.get(socket.id)
+    if (user) {
+      user.pos = data.position
+    }
   })
 
   socket.on('userCheat', (data: any) => {
