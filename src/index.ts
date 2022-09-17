@@ -9,6 +9,7 @@ const io = new Server(httpServer, {
     origin: [
       'https://my-frontend.com',
       'https://my-other-frontend.com',
+      'https://cloud-sleep.netlify.app',
       'http://localhost:5577',
     ],
     credentials: true,
